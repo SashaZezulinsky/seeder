@@ -12,7 +12,7 @@
 
 ## Architecture
 
-Uncle bob clean code architecure is used for seeder server and clinet applicatipns
+Uncle Bob Clean Code architecture is used for seeder apps
 
 ## How do we run?
 
