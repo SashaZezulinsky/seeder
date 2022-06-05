@@ -3,14 +3,15 @@ package http
 import (
 	"context"
 	"encoding/json"
-	"github.com/labstack/echo/v4"
 	"io/ioutil"
 	"net/http"
-	"seeder/pkg/errors"
 	"strconv"
 	"time"
 
+	"github.com/labstack/echo/v4"
+
 	"seeder/internal/domain"
+	"seeder/pkg/errors"
 )
 
 type nodeHandler struct {

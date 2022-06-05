@@ -11,8 +11,6 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/mongo"
-
-	"seeder/config"
 )
 
 const (
@@ -23,25 +21,38 @@ const (
 // Server struct
 type Server struct {
 	echo    *echo.Echo
-	cfg     *config.Config
 	mongoDB *mongo.Client
+
+	mongoCollection    string
+	mongoURI           string
+	mongoDatabase      string
+	port               string
+	nodesCheckInterval string
 }
 
 // NewServer New Server constructor
-func NewServer(cfg *config.Config, mongoDB *mongo.Client) *Server {
-	return &Server{echo: echo.New(), cfg: cfg, mongoDB: mongoDB}
+func NewServer(mongoCollection, mongoURI, mongoDatabase, port, nodesCheckInterval string, mongoDB *mongo.Client) *Server {
+	return &Server{
+		echo:               echo.New(),
+		mongoCollection:    mongoCollection,
+		mongoDB:            mongoDB,
+		mongoDatabase:      mongoDatabase,
+		mongoURI:           mongoURI,
+		port:               port,
+		nodesCheckInterval: nodesCheckInterval,
+	}
 }
 
 func (s *Server) Run() error {
 	server := &http.Server{
-		Addr:           s.cfg.Server.Port,
+		Addr:           ":" + s.port,
 		ReadTimeout:    time.Second * 5,
 		WriteTimeout:   time.Second * 5,
 		MaxHeaderBytes: maxHeaderBytes,
 	}
 
 	go func() {
-		log.Printf("Server is listening on PORT: %s\n", s.cfg.Server.Port)
+		log.Printf("Server is listening on PORT: :`%s\n", s.port)
 		if err := s.echo.StartServer(server); err != nil {
 			log.Fatalln("Error starting Server: ", err)
 		}

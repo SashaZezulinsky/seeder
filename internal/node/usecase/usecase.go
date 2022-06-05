@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"seeder/internal/domain"
-	"seeder/pkg/errors"
 	"strings"
 	"time"
+
+	"seeder/internal/domain"
+	"seeder/pkg/errors"
 )
 
 type nodeUsecase struct {

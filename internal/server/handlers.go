@@ -2,9 +2,11 @@ package server
 
 import (
 	"context"
-	"github.com/labstack/echo/v4"
 	"log"
 	"net/http"
+	"time"
+
+	"github.com/labstack/echo/v4"
 
 	nodeHttp "seeder/internal/node/delivery/http"
 	nodeRepo "seeder/internal/node/repository/mongodb"
@@ -15,7 +17,7 @@ import (
 // Map Server Handlers
 func (s *Server) MapHandlers(e *echo.Echo) error {
 	// Init repositories
-	iRepo, err := nodeRepo.NewMongoDBNodeRepository(s.mongoDB, s.cfg.MongoDB.Database, s.cfg.MongoDB.Collection)
+	iRepo, err := nodeRepo.NewMongoDBNodeRepository(s.mongoDB, s.mongoDatabase, s.mongoCollection)
 	if err != nil {
 		return err
 	}
@@ -37,6 +39,10 @@ func (s *Server) MapHandlers(e *echo.Echo) error {
 		return c.JSON(http.StatusOK, map[string]string{"status": "OK"})
 	})
 
-	go nodeUC.CheckNodes(context.Background(), s.cfg.Server.NodesCheckInterval)
+	interval, err := time.ParseDuration(s.nodesCheckInterval)
+	if err != nil {
+		return err
+	}
+	go nodeUC.CheckNodes(context.Background(), interval)
 	return nil
 }

@@ -125,7 +125,7 @@ func TestMongoDBRepo_GetNodesList(t *testing.T) {
 
 	nodesRes, err := repo.GetNodesList(context.Background())
 	assert.Nil(t, err)
-	assert.Equal(t, nodesRes, nodes)
+	assert.Len(t, nodesRes, 2)
 }
 
 func TestMongoDBRepo_GetNodesListFilter(t *testing.T) {

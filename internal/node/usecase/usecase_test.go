@@ -2,13 +2,14 @@ package usecase
 
 import (
 	"context"
-	"seeder/pkg/errors"
 	"testing"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
+
 	"seeder/internal/domain"
 	"seeder/internal/node/mock"
+	"seeder/pkg/errors"
 )
 
 var node = &domain.Node{

@@ -1,8 +1,0 @@
-server:
-  Port: :6000
-  NodesCheckInterval: 10s
-
-mongodb:
-  MongoURI: mongodb://localhost:27017
-  Database: test
-  Collection: test_collection
