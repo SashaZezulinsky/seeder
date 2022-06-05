@@ -14,15 +14,12 @@ import (
 )
 
 const (
-	maxHeaderBytes = 1 << 20
-	ctxTimeout     = 5
+	ctxTimeout = 5
 )
 
-// Server struct
 type Server struct {
 	echo    *echo.Echo
 	mongoDB *mongo.Client
-
 	mongoCollection    string
 	mongoURI           string
 	mongoDatabase      string
@@ -30,7 +27,6 @@ type Server struct {
 	nodesCheckInterval string
 }
 
-// NewServer New Server constructor
 func NewServer(mongoCollection, mongoURI, mongoDatabase, port, nodesCheckInterval string, mongoDB *mongo.Client) *Server {
 	return &Server{
 		echo:               echo.New(),
@@ -45,16 +41,13 @@ func NewServer(mongoCollection, mongoURI, mongoDatabase, port, nodesCheckInterva
 
 func (s *Server) Run() error {
 	server := &http.Server{
-		Addr:           ":" + s.port,
-		ReadTimeout:    time.Second * 5,
-		WriteTimeout:   time.Second * 5,
-		MaxHeaderBytes: maxHeaderBytes,
+		Addr: ":" + s.port,
 	}
 
 	go func() {
-		log.Printf("Server is listening on PORT: :`%s\n", s.port)
+		log.Println("Listening port", s.port)
 		if err := s.echo.StartServer(server); err != nil {
-			log.Fatalln("Error starting Server: ", err)
+			log.Fatalf("Unable to start seeder: %v", err)
 		}
 	}()
 
@@ -75,6 +68,6 @@ func (s *Server) Run() error {
 	ctx, shutdown := context.WithTimeout(context.Background(), ctxTimeout*time.Second)
 	defer shutdown()
 
-	log.Println("Server Exited Properly")
+	log.Println("Server exited properly")
 	return s.echo.Server.Shutdown(ctx)
 }

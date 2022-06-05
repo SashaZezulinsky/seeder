@@ -2,11 +2,12 @@ package usecase
 
 import (
 	"context"
-	"fmt"
-	"io/ioutil"
+	"log"
 	"net/http"
 	"strings"
 	"time"
+	"encoding/json"
+	"io/ioutil"
 
 	"seeder/internal/domain"
 	"seeder/pkg/errors"
@@ -14,6 +15,10 @@ import (
 
 type nodeUsecase struct {
 	nodeRepo domain.NodeRepository
+}
+
+type PingResponse struct {
+	Alive bool `json:"alive"`
 }
 
 func NewNodeUseCase(nRepo domain.NodeRepository) domain.NodeUseCase {
@@ -47,21 +52,21 @@ func (n *nodeUsecase) CheckNodes(ctx context.Context, interval time.Duration) {
 			list, err := n.nodeRepo.GetNodesList(ctx)
 			if err != nil {
 				if err != errors.ErrNotFound {
-					fmt.Printf("Error on getting nodes from list: %v\n", err)
+					log.Printf("Error on getting nodes from list: %v\n", err)
 				}
 			}
 			for _, node := range list {
 				status, err := makePingRequest(node.IP)
 				if err != nil && !strings.Contains(err.Error(), "connect: connection refused") {
-					fmt.Printf("Error on pinging node %v:%v - %v\n", node.Client, node.IP, err)
+					log.Printf("Error on pinging node %v %v, error: %v\n", node.IP, node.Client, err)
 				}
 				if !status {
-					fmt.Printf("Node %v:%v is not alive\n", node.Client, node.IP)
+					log.Printf("Node %v %v is not alive\n", node.IP, node.Client)
 				}
 				if node.Alive != status {
 					err = n.nodeRepo.UpdateNodeAliveStatus(ctx, node, status)
 					if err != nil {
-						fmt.Printf("Error on getting nodes from list: %v\n", err)
+						log.Printf("Error on getting nodes from list: %v\n", err)
 					}
 				}
 			}
@@ -79,13 +84,17 @@ func makePingRequest(ip string) (ok bool, err error) {
 		return false, err
 	}
 
+	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
+
+	var pingrp PingResponse
+	if err := json.Unmarshal(body, &pingrp); err != nil {
 		return false, err
 	}
 
-	if string(body) == "pong" {
+	if pingrp.Alive {
 		return true, nil
+	} else {
+		return false, nil
 	}
-	return false, nil
 }

@@ -32,10 +32,9 @@ func (m *mongoDBRepo) GetNodesList(ctx context.Context, filters ...domain.NodeLi
 	)
 	query := bson.D{}
 
-	switch {
-	case len(filters) > 1:
+	if len(filters) > 1 {
 		return nil, fmt.Errorf("filters length must be less than 2")
-	case len(filters) > 0:
+	} else if len(filters) > 0 {
 		if filters[0].Ip != "" {
 			query = append(query, bson.E{Key: "ip", Value: filters[0].Ip})
 		}
@@ -52,9 +51,8 @@ func (m *mongoDBRepo) GetNodesList(ctx context.Context, filters ...domain.NodeLi
 		if filters[0].Alive != nil {
 			query = append(query, bson.E{Key: "alive", Value: *filters[0].Alive})
 		}
-
 		cur, err = m.collection.Aggregate(ctx, mongo.Pipeline{bson.D{{"$match", query}}})
-	default:
+	} else {
 		cur, err = m.collection.Find(ctx, bson.D{{}})
 	}
 
@@ -80,7 +78,7 @@ func (m *mongoDBRepo) GetNodesList(ctx context.Context, filters ...domain.NodeLi
 	cur.Close(ctx)
 
 	if len(nodes) == 0 {
-		return nil, errors.ErrNotFound
+		return nil, nil
 	}
 
 	return nodes, nil
