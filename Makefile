@@ -26,5 +26,8 @@ local-client:
 	docker run --network host --name seeder-client seeder-image:latest client --port $(PORT) --server.address http://127.0.0.1:5000
 
 clean:
-	rm -rf bin
-	docker rm -f seeder-server seeder-client seeder-mongo
+	rm -rf bin *.bundle
+	- docker rm -f seeder-server seeder-client seeder-mongo
+
+bundle:
+	git bundle create seeder.bundle --all
