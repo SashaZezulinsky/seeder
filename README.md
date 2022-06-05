@@ -29,11 +29,16 @@ OR
 OR
 `make local-client PORT=27001`
 
+## seeder server endpoints
+
 ### To list nodes
-`curl --location --request GET 'http://localhost:5000/v1/nodes'`
+`curl -X GET 'http://localhost:5000/v1/nodes'`
 
 ### To list nodes alive for 30 seconds
-`curl --location --request GET 'http://localhost:5000/v1/nodes?alive=true&age=30s'`
+`curl -X GET 'http://localhost:5000/v1/nodes?alive=true&age=30s'`
 
 ### To send hello message
 `curl -X POST 'http://localhost:5000/v1/nodes' -H 'Content-Type: application/json' -d '{"ip":"192.168.0.12:27002", "name":"testClientName2", "client":"testClient", "version":"v1.0.1"}`
+
+## seeder client endpoints
+`curl -X GET 'http://localhost:27001/ping'`
