@@ -16,6 +16,9 @@ Uncle Bob Clean Code architecture is used for seeder apps
 
 ## How do we run?
 
+### To run tests
+`make test`
+
 ### To run seeder server
 `make run-seeder`
 OR
