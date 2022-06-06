@@ -8,80 +8,9 @@ import (
 	context "context"
 	reflect "reflect"
 	domain "seeder/internal/domain"
-	time "time"
 
 	gomock "github.com/golang/mock/gomock"
-	v4 "github.com/labstack/echo/v4"
 )
-
-// MockNodeUseCase is a mock of NodeUseCase interface.
-type MockNodeUseCase struct {
-	ctrl     *gomock.Controller
-	recorder *MockNodeUseCaseMockRecorder
-}
-
-// MockNodeUseCaseMockRecorder is the mock recorder for MockNodeUseCase.
-type MockNodeUseCaseMockRecorder struct {
-	mock *MockNodeUseCase
-}
-
-// NewMockNodeUseCase creates a new mock instance.
-func NewMockNodeUseCase(ctrl *gomock.Controller) *MockNodeUseCase {
-	mock := &MockNodeUseCase{ctrl: ctrl}
-	mock.recorder = &MockNodeUseCaseMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockNodeUseCase) EXPECT() *MockNodeUseCaseMockRecorder {
-	return m.recorder
-}
-
-// AddNode mocks base method.
-func (m *MockNodeUseCase) AddNode(ctx context.Context, node *domain.Node) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddNode", ctx, node)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// AddNode indicates an expected call of AddNode.
-func (mr *MockNodeUseCaseMockRecorder) AddNode(ctx, node interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddNode", reflect.TypeOf((*MockNodeUseCase)(nil).AddNode), ctx, node)
-}
-
-// CheckNodes mocks base method.
-func (m *MockNodeUseCase) CheckNodes(ctx context.Context, interval time.Duration) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "CheckNodes", ctx, interval)
-}
-
-// CheckNodes indicates an expected call of CheckNodes.
-func (mr *MockNodeUseCaseMockRecorder) CheckNodes(ctx, interval interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckNodes", reflect.TypeOf((*MockNodeUseCase)(nil).CheckNodes), ctx, interval)
-}
-
-// GetNodesList mocks base method.
-func (m *MockNodeUseCase) GetNodesList(ctx context.Context, filters ...domain.NodeListOptions) ([]*domain.Node, error) {
-	m.ctrl.T.Helper()
-	varargs := []interface{}{ctx}
-	for _, a := range filters {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "GetNodesList", varargs...)
-	ret0, _ := ret[0].([]*domain.Node)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetNodesList indicates an expected call of GetNodesList.
-func (mr *MockNodeUseCaseMockRecorder) GetNodesList(ctx interface{}, filters ...interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{ctx}, filters...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNodesList", reflect.TypeOf((*MockNodeUseCase)(nil).GetNodesList), varargs...)
-}
 
 // MockNodeRepository is a mock of NodeRepository interface.
 type MockNodeRepository struct {
@@ -166,55 +95,4 @@ func (m *MockNodeRepository) UpdateNodeAliveStatus(ctx context.Context, node *do
 func (mr *MockNodeRepositoryMockRecorder) UpdateNodeAliveStatus(ctx, node, status interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateNodeAliveStatus", reflect.TypeOf((*MockNodeRepository)(nil).UpdateNodeAliveStatus), ctx, node, status)
-}
-
-// MockNodeHandlers is a mock of NodeHandlers interface.
-type MockNodeHandlers struct {
-	ctrl     *gomock.Controller
-	recorder *MockNodeHandlersMockRecorder
-}
-
-// MockNodeHandlersMockRecorder is the mock recorder for MockNodeHandlers.
-type MockNodeHandlersMockRecorder struct {
-	mock *MockNodeHandlers
-}
-
-// NewMockNodeHandlers creates a new mock instance.
-func NewMockNodeHandlers(ctrl *gomock.Controller) *MockNodeHandlers {
-	mock := &MockNodeHandlers{ctrl: ctrl}
-	mock.recorder = &MockNodeHandlersMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockNodeHandlers) EXPECT() *MockNodeHandlersMockRecorder {
-	return m.recorder
-}
-
-// AuthNode mocks base method.
-func (m *MockNodeHandlers) AuthNode() v4.HandlerFunc {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AuthNode")
-	ret0, _ := ret[0].(v4.HandlerFunc)
-	return ret0
-}
-
-// AuthNode indicates an expected call of AuthNode.
-func (mr *MockNodeHandlersMockRecorder) AuthNode() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AuthNode", reflect.TypeOf((*MockNodeHandlers)(nil).AuthNode))
-}
-
-// GetNodesList mocks base method.
-func (m *MockNodeHandlers) GetNodesList() v4.HandlerFunc {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetNodesList")
-	ret0, _ := ret[0].(v4.HandlerFunc)
-	return ret0
-}
-
-// GetNodesList indicates an expected call of GetNodesList.
-func (mr *MockNodeHandlersMockRecorder) GetNodesList() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNodesList", reflect.TypeOf((*MockNodeHandlers)(nil).GetNodesList))
 }

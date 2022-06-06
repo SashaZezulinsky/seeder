@@ -5,8 +5,6 @@ package domain
 import (
 	"context"
 	"time"
-
-	"github.com/labstack/echo/v4"
 )
 
 type Node struct {
@@ -26,20 +24,9 @@ type NodeListOptions struct {
 	Age     time.Duration
 }
 
-type NodeUseCase interface {
-	GetNodesList(ctx context.Context, filters ...NodeListOptions) ([]*Node, error)
-	AddNode(ctx context.Context, node *Node) error
-	CheckNodes(ctx context.Context, interval time.Duration)
-}
-
 type NodeRepository interface {
 	GetNodesList(ctx context.Context, filters ...NodeListOptions) ([]*Node, error)
 	AddNode(ctx context.Context, node *Node) error
 	UpdateNodeAliveStatus(ctx context.Context, node *Node, status bool) error
 	FindNode(ctx context.Context, node *Node) error
-}
-
-type NodeHandlers interface {
-	GetNodesList() echo.HandlerFunc
-	AuthNode() echo.HandlerFunc
 }

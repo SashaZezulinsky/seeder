@@ -9,6 +9,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"time"
 
 	"seeder/internal/domain"
 )
@@ -29,7 +30,10 @@ func main() {
 	flag.StringVar(&clientType, "client.type", "testClient", "client type")
 	flag.Parse()
 
-	sendHelloRequest()
+	go func() {
+		time.Sleep(3 * time.Second)
+		sendHelloRequest()
+	}()
 
 	http.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
 		node := domain.Node{
@@ -44,7 +48,7 @@ func main() {
 	})
 
 	log.Println("Listening port", port)
-	if err := http.ListenAndServe(":" + port, nil); err != nil {
+	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Fatal(err)
 	}
 }

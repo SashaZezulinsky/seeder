@@ -98,9 +98,15 @@ func (m *mongoDBRepo) UpdateNodeAliveStatus(ctx context.Context, node *domain.No
 			{"client": node.Client},
 		},
 	}
+
+	updatedFields := bson.D{{Key: "alive", Value: alive}}
+	if alive == true {
+		updatedFields = append(updatedFields, bson.E{Key: "date", Value: time.Now()})
+	}
+
 	_, err := m.collection.UpdateOne(ctx,
 		filter,
-		bson.D{{"$set", bson.D{{"alive", alive}}}},
+		bson.D{{"$set", updatedFields}},
 	)
 	return err
 }

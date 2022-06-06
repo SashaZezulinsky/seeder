@@ -10,10 +10,6 @@
 
 4. Support queries like: which nodes are alive during the last 1 hours, 2 hours, 1 day.
 
-## Architecture
-
-Uncle Bob Clean Code architecture is used for seeder apps
-
 ## How do we run?
 
 ### To run tests

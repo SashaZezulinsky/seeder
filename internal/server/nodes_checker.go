@@ -1,55 +1,24 @@
-package usecase
+package server
 
 import (
 	"context"
-	"log"
-	"net/http"
-	"strings"
-	"time"
 	"encoding/json"
 	"io/ioutil"
-
+	"log"
+	"net/http"
 	"seeder/internal/domain"
 	"seeder/pkg/errors"
+	"strings"
+	"time"
 )
 
-type nodeUsecase struct {
-	nodeRepo domain.NodeRepository
-}
-
-type PingResponse struct {
-	Alive bool `json:"alive"`
-}
-
-func NewNodeUseCase(nRepo domain.NodeRepository) domain.NodeUseCase {
-	return &nodeUsecase{
-		nodeRepo: nRepo,
-	}
-}
-
-func (n *nodeUsecase) GetNodesList(ctx context.Context, filter ...domain.NodeListOptions) ([]*domain.Node, error) {
-	return n.nodeRepo.GetNodesList(ctx, filter...)
-}
-
-func (n *nodeUsecase) AddNode(ctx context.Context, node *domain.Node) error {
-	node.Date = time.Now()
-	node.Alive = true
-	if err := n.nodeRepo.FindNode(ctx, node); err != nil {
-		if err == errors.ErrNotFound {
-			return n.nodeRepo.AddNode(ctx, node)
-		}
-		return err
-	}
-	return nil
-}
-
-func (n *nodeUsecase) CheckNodes(ctx context.Context, interval time.Duration) {
+func checkNodes(ctx context.Context, repo domain.NodeRepository, interval time.Duration) {
 	ticker := time.NewTicker(interval)
 	quit := make(chan struct{})
 	for {
 		select {
 		case <-ticker.C:
-			list, err := n.nodeRepo.GetNodesList(ctx)
+			list, err := repo.GetNodesList(ctx)
 			if err != nil {
 				if err != errors.ErrNotFound {
 					log.Printf("Error on getting nodes from list: %v\n", err)
@@ -64,7 +33,7 @@ func (n *nodeUsecase) CheckNodes(ctx context.Context, interval time.Duration) {
 					log.Printf("Node %v %v is not alive\n", node.IP, node.Client)
 				}
 				if node.Alive != status {
-					err = n.nodeRepo.UpdateNodeAliveStatus(ctx, node, status)
+					err = repo.UpdateNodeAliveStatus(ctx, node, status)
 					if err != nil {
 						log.Printf("Error on getting nodes from list: %v\n", err)
 					}
@@ -76,6 +45,10 @@ func (n *nodeUsecase) CheckNodes(ctx context.Context, interval time.Duration) {
 			return
 		}
 	}
+}
+
+type PingResponse struct {
+	Alive bool `json:"alive"`
 }
 
 func makePingRequest(ip string) (ok bool, err error) {
@@ -91,10 +64,5 @@ func makePingRequest(ip string) (ok bool, err error) {
 	if err := json.Unmarshal(body, &pingrp); err != nil {
 		return false, err
 	}
-
-	if pingrp.Alive {
-		return true, nil
-	} else {
-		return false, nil
-	}
+	return pingrp.Alive, nil
 }
